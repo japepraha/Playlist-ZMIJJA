@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist kapely</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #eee;
+            cursor: pointer;
+        }
+        input {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Playlist pro kapelu</h1>
+
+    <div>
+        <input type="text" id="song" placeholder="Skladba">
+        <input type="text" id="key" placeholder="Tónina">
+        <input type="text" id="length" placeholder="Délka">
+        <button onclick="addRow()">Přidat skladbu</button>
+    </div>
+
+    <table id="playlist">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Skladba</th>
+                <th onclick="sortTable(1)">Tónina</th>
+                <th onclick="sortTable(2)">Délka</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Řádky budou přidávány dynamicky -->
+        </tbody>
+    </table>
+
+    <script>
+        function addRow() {
+            const song = document.getElementById('song').value;
+            const key = document.getElementById('key').value;
+            const length = document.getElementById('length').value;
+
+            if (!song || !key || !length) return;
+
+            const table = document.getElementById('playlist').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+
+            newRow.insertCell(0).innerText = song;
+            newRow.insertCell(1).innerText = key;
+            newRow.insertCell(2).innerText = length;
+
+            document.getElementById('song').value = "";
+            document.getElementById('key').value = "";
+            document.getElementById('length').value = "";
+        }
+
+        function sortTable(n) {
+            const table = document.getElementById("playlist");
+            let switching = true;
+            let dir = "asc";
+            let switchcount = 0;
+
+            while (switching) {
+                switching = false;
+                const rows = table.rows;
+                for (let i = 1; i < rows.length - 1; i++) {
+                    let shouldSwitch = false;
+                    const x = rows[i].getElementsByTagName("TD")[n];
+                    const y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir === "asc" && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    } else if (dir === "desc" && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount === 0 && dir === "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

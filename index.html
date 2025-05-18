@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -37,7 +38,7 @@
         <input type="text" id="song" placeholder="Skladba">
         <input type="text" id="key" placeholder="Tónina">
         <input type="text" id="length" placeholder="Délka">
-        <button onclick="addRow()">Přidat skladbu</button>
+        <button id="addBtn">Přidat skladbu</button>
     </div>
 
     <table id="playlist">
@@ -54,58 +55,70 @@
     </table>
 
     <script>
-        function addRow() {
-            const song = document.getElementById('song').value;
-            const key = document.getElementById('key').value;
-            const length = document.getElementById('length').value;
+        document.addEventListener('DOMContentLoaded', function () {
+            const addBtn = document.getElementById('addBtn');
+            addBtn.addEventListener('click', addRow);
 
-            if (!song || !key || !length) return;
+            function addRow() {
+                const songInput = document.getElementById('song');
+                const keyInput = document.getElementById('key');
+                const lengthInput = document.getElementById('length');
 
-            const table = document.getElementById('playlist').getElementsByTagName('tbody')[0];
-            const newRow = table.insertRow();
+                const song = songInput.value.trim();
+                const key = keyInput.value.trim();
+                const length = lengthInput.value.trim();
 
-            newRow.insertCell(0).innerText = song;
-            newRow.insertCell(1).innerText = key;
-            newRow.insertCell(2).innerText = length;
-
-            document.getElementById('song').value = "";
-            document.getElementById('key').value = "";
-            document.getElementById('length').value = "";
-        }
-
-        function sortTable(n) {
-            const table = document.getElementById("playlist");
-            let switching = true;
-            let dir = "asc";
-            let switchcount = 0;
-
-            while (switching) {
-                switching = false;
-                const rows = table.rows;
-                for (let i = 1; i < rows.length - 1; i++) {
-                    let shouldSwitch = false;
-                    const x = rows[i].getElementsByTagName("TD")[n];
-                    const y = rows[i + 1].getElementsByTagName("TD")[n];
-                    if (dir === "asc" && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                        shouldSwitch = true;
-                        break;
-                    } else if (dir === "desc" && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                        shouldSwitch = true;
-                        break;
-                    }
+                if (!song || !key || !length) {
+                    alert("Vyplň všechna pole!");
+                    return;
                 }
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                    switchcount++;
-                } else {
-                    if (switchcount === 0 && dir === "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
-                }
+
+                const table = document.getElementById('playlist').getElementsByTagName('tbody')[0];
+                const newRow = table.insertRow();
+
+                newRow.insertCell(0).innerText = song;
+                newRow.insertCell(1).innerText = key;
+                newRow.insertCell(2).innerText = length;
+
+                songInput.value = "";
+                keyInput.value = "";
+                lengthInput.value = "";
             }
-        }
+
+            window.sortTable = function(n) {
+                const table = document.getElementById("playlist");
+                let switching = true;
+                let dir = "asc";
+                let switchcount = 0;
+
+                while (switching) {
+                    switching = false;
+                    const rows = table.rows;
+                    for (let i = 1; i < rows.length - 1; i++) {
+                        let shouldSwitch = false;
+                        const x = rows[i].getElementsByTagName("TD")[n];
+                        const y = rows[i + 1].getElementsByTagName("TD")[n];
+                        if (dir === "asc" && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        } else if (dir === "desc" && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                        switchcount++;
+                    } else {
+                        if (switchcount === 0 && dir === "asc") {
+                            dir = "desc";
+                            switching = true;
+                        }
+                    }
+                }
+            };
+        });
     </script>
 </body>
 </html>
